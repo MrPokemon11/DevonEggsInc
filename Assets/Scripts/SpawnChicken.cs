@@ -19,6 +19,8 @@ public class SpawnChicken : MonoBehaviour
     private float timer = 60f;
     private int multCount = 0;
 
+    private bool fight = false;
+
     private void Awake() 
     {
         if (ChickenInstance != null && ChickenInstance != this) 
@@ -43,22 +45,38 @@ public class SpawnChicken : MonoBehaviour
         timer -= Time.deltaTime;
         if (Input.anyKeyDown)
         {
-            for (float i = chickenMultiplier; i > 0; i -= 1f)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (i > 0) Instantiate(chicken, chickenSpawnPos, Quaternion.identity);
-                else
+                fight = !fight;
+            }
+
+            if (fight)
+            {
+                GameObject[] evilChickens = GameObject.FindGameObjectsWithTag("EvilChicken");
+                foreach (var echickens in evilChickens)
                 {
-                    float more = Random.Range(0f, 1f);
-                    if (more < chickenMultiplier)
-                    {
-                        Instantiate(chicken, chickenSpawnPos, Quaternion.identity);
-                    }
+                    echickens.GetComponent<Chicken>().decrementHealth();
                 }
             }
+            else
+            {
+                for (float i = chickenMultiplier; i > 0; i -= 1f)
+                {
+                    if (i > 0) Instantiate(chicken, chickenSpawnPos, Quaternion.identity);
+                    else
+                    {
+                        float more = Random.Range(0f, 1f);
+                        if (more < chickenMultiplier)
+                        {
+                            Instantiate(chicken, chickenSpawnPos, Quaternion.identity);
+                        }
+                    }
+                }
+                timer = 60f;
+                multCount++;
+                chickenMultiplier = 1.0f + (multCount % 200f);
+            }
             
-            timer = 60f;
-            multCount++;
-            chickenMultiplier = 1.0f + (multCount % 200f);
         }
 
         if (timer <= 0)

@@ -25,8 +25,9 @@ public class Chicken : MonoBehaviour
     {
         if (isEvil)
         {
-            health = 3;
+            health = 25;
             gameObject.tag = "EvilChicken";
+            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * 2f, gameObject.transform.localScale.y * 2f, gameObject.transform.localScale.z * 2f);
         }
         rb = GetComponent<Rigidbody>();
     }
