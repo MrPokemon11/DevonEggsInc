@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float fireRate;
+
+    private GameObject target = null;
+    
 
     // Update is called once per frame
     void Update()
+    {
+        if (target == null)
+        {
+            target = GameObject.FindGameObjectWithTag("EvilChicken");
+        }
+    }
+
+    void Fire()
     {
         
     }

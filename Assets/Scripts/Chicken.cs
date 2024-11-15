@@ -10,6 +10,7 @@ public class Chicken : MonoBehaviour
     private bool isEvil = false;
     private int health = 1;
     [SerializeField] private GameObject target;
+    private Rigidbody rb;
     
     private void Awake()
     {
@@ -25,8 +26,9 @@ public class Chicken : MonoBehaviour
         if (isEvil)
         {
             health = 3;
-            
+            gameObject.tag = "EvilChicken";
         }
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -36,24 +38,58 @@ public class Chicken : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        
         if (isEvil)
         {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position, Time.deltaTime * 15f);
             EvilUpdate();
         }
         else
         {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position, Time.deltaTime * 10.0f);
             GoodUpdate();
         }
+        
     }
 
     void GoodUpdate()
     {
-        this.transform.position = Vector3.MoveTowards(this.transform.position, target.transform.position, Time.deltaTime * 10.0f);
+
+        
     }
 
     void EvilUpdate()
     {
-        
+        if (target == null)
+        {
+            target = GameObject.FindWithTag("Chicken");
+        }
+
+        if (target == null)
+        {
+            rb.AddForce(Vector3.up * 100f, ForceMode.Impulse);
+            Destroy(gameObject, 2f);
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (isEvil)
+        {
+            if (other.gameObject.tag == "Chicken")
+            {
+                other.gameObject.GetComponent<Chicken>().decrementHealth();
+            }
+        }
+        else if (other.gameObject.tag == "Finish" && !isEvil)
+        {
+            Destroy(gameObject);
+            
+        }
+    }
+
+    public void decrementHealth()
+    {
+        health--;
     }
 }
